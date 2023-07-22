@@ -1,20 +1,20 @@
 import Fastify from "fastify";
 import path from "path";
 import { fileURLToPath } from "url";
-import {
-  serializerCompiler,
-  validatorCompiler,
-  ZodTypeProvider,
-  jsonSchemaTransform,
-} from "fastify-type-provider-zod";
+import { TypeBoxTypeProvider } from "@fastify/type-provider-typebox";
+import { TypeSystem } from "@sinclair/typebox/system";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+TypeSystem.ExactOptionalPropertyTypes = false;
 
 const fastify = Fastify({
   logger: true,
-}).withTypeProvider<ZodTypeProvider>();
-
-fastify.setValidatorCompiler(validatorCompiler);
-fastify.setSerializerCompiler(serializerCompiler);
+  ajv: {
+    customOptions: {
+      keywords: ["media"]
+    }
+  }
+}).withTypeProvider<TypeBoxTypeProvider>();
 
 fastify.register(import("@fastify/static"), {
   root: path.join(__dirname, import.meta.env.PROD ? "../public" : "./public"),
@@ -46,9 +46,8 @@ fastify.register(import("@fastify/swagger"), {
     externalDocs: {
       url: "https://swagger.io",
       description: "Find more info here",
-    }
+    },
   },
-  transform: jsonSchemaTransform,
 });
 
 import.meta.env.DEV && fastify.register(import("@fastify/swagger-ui"));

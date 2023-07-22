@@ -1,3 +1,4 @@
+import { Type } from "@sinclair/typebox";
 import { FastifyInstance } from "./../server";
 import { z } from "zod";
 
@@ -34,13 +35,22 @@ export default async function (fastify: FastifyInstance) {
     "/:name",
     {
       schema: {
-        params: z.object({
-          name: z.enum(["apple", "banana"]),
+        params: Type.Object({
+          name: Type.Union([
+            Type.Literal("apple"),
+            Type.Literal("banana"),
+          ]),
         }),
         response: {
-          200: z.object({
-            name: z.enum(["apple", "banana"]),
-            color: z.enum(["red", "yellow"]),
+          200: Type.Object({
+            name: Type.Union([
+              Type.Literal("apple"),
+              Type.Literal("banana"),
+            ]),
+            color: Type.Union([
+              Type.Literal("red"),
+              Type.Literal("yellow")
+            ])
           }),
         },
       },

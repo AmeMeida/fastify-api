@@ -1,3 +1,4 @@
+import { Type } from "@sinclair/typebox";
 import { FastifyInstance } from "../server";
 import { z } from "zod";
 
@@ -6,22 +7,24 @@ export default async function (fastify: FastifyInstance) {
     "/password/:user",
     {
       schema: {
-        params: z.object({
-          user: z.enum(["admin", "user"]),
+        params: Type.Object({
+          user: Type.Union([
+            Type.Literal("admin"),
+            Type.Literal("user"),
+          ])
         }),
-        body: z.object({
-          password: z.string().min(8).max(32),
+        body: Type.Object({
+          password: Type.String({ minLength: 8, maxLength: 32 })
         }),
         response: {
-          200: z
-            .object({
-              user: z.enum(["admin", "user"]).describe("Type of user"),
-              password: z.string().min(8).max(32).describe("Password"),
-            })
-            .describe("Credentials confirmation"),
-          400: z
-            .literal("Invalid password")
-            .describe("Password was incorrect or invalid"),
+          200: Type.Object({
+            user: Type.Union([
+              Type.Literal("admin"),
+              Type.Literal("user"),
+            ]),
+            password: Type.String({ minLength: 8, maxLength: 32 }),
+          }),
+          400: Type.Literal("Invalid password"),
         },
       },
     },

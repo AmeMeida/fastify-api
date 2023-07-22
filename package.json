@@ -13,6 +13,7 @@
   "devDependencies": {
     "@fastify/swagger-ui": "^1.9.2",
     "@fastify/type-provider-json-schema-to-ts": "^2.2.2",
+    "@fastify/type-provider-typebox": "^3.3.0",
     "@types/node": "^20.4.2",
     "eslint": "^8.45.0",
     "prettier": "^3.0.0",
@@ -24,6 +25,7 @@
   "dependencies": {
     "@fastify/static": "^6.10.2",
     "@fastify/swagger": "^8.8.0",
+    "@sinclair/typebox": "^0.29.6",
     "fastify": "^4.20.0",
     "fastify-type-provider-zod": "^1.1.9",
     "fluent-json-schema": "^4.1.0"

@@ -14,9 +14,9 @@
     "@fastify/swagger-ui": "^1.9.2",
     "@fastify/type-provider-json-schema-to-ts": "^2.2.2",
     "@fastify/type-provider-typebox": "^3.3.0",
+    "@types/js-yaml": "^4.0.5",
     "@types/json-schema": "^7.0.12",
     "@types/node": "^20.4.2",
-    "@types/yamljs": "^0.2.31",
     "eslint": "^8.45.0",
     "prettier": "^3.0.0",
     "typescript": "^5.0.2",
@@ -32,11 +32,7 @@
     "@fastify/static": "^6.10.2",
     "@fastify/swagger": "^8.8.0",
     "@sinclair/typebox": "^0.29.6",
-    "ajv": "^8.12.0",
-    "fast-json-stringify": "^5.7.0",
     "fastify": "^4.20.0",
-    "fastify-type-provider-zod": "^1.1.9",
-    "yamljs": "^0.3.0",
-    "zod-to-json-schema": "^3.21.4"
+    "js-yaml": "^4.1.0"
   }
 }

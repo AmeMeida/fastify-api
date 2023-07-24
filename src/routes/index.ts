@@ -7,6 +7,10 @@ import musica from "../assets/musica.jpg";
 export const prefix = "";
 
 export default async function (fastify: FastifyInstance) {
+  fastify.get("/", async (_, reply) => {
+    return reply.send("Hello World!");
+  });
+
   fastify.post(
     "/password/:user",
     {

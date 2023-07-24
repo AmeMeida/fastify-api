@@ -1,6 +1,5 @@
 import type { FastifyInstance } from "..";
 import { Type } from "@sinclair/typebox";
-import { z } from "zod";
 
 export const prefix = "/user";
 
@@ -14,8 +13,8 @@ export default async function (fastify: FastifyInstance) {
           password: Type.String({ minLength: 8, maxLength: 32 }),
         }),
         response: {
-          200: z.object({
-            logged: z.boolean(),
+          200: Type.Object({
+            logged: Type.Boolean(),
           }),
         },
         summary: "Login",
@@ -23,7 +22,7 @@ export default async function (fastify: FastifyInstance) {
         externalDocs: {
           url: "https://www.wikipedia.org/",
           description: "Find more info here",
-        }
+        },
       } as const,
     },
     async (request, reply) => {

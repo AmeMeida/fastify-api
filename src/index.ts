@@ -1,6 +1,3 @@
-// FAVOR NÃO ENCOSTAR NESSE ARQUIVO.
-// NEM EU ENTENDO O QUE TA ACONTECENDO AQUI
-
 import Fastify, { FastifyTypeProvider } from "fastify";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -11,23 +8,17 @@ import type {
   FromSchemaDefaultOptions,
   JSONSchema7,
 } from "json-schema-to-ts";
-import { z } from "zod";
+import YAML from "js-yaml";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-import zodToJsonSchema from "zod-to-json-schema";
-import { acceptedTypes, compileSerializer } from "./serializer";
-import { compileParser } from "./validators";
-import YAML from "yamljs";
 
 interface TypeProvider<
   Options extends FromSchemaOptions = FromSchemaDefaultOptions,
 > extends FastifyTypeProvider {
-  output: this["input"] extends z.Schema
-    ? z.infer<this["input"]>
-    : this["input"] extends TSchema
+  output: this["input"] extends TSchema
     ? Static<this["input"]>
     : this["input"] extends JSONSchema7
     ? FromSchema<this["input"], Options>
-    : unknown;
+    : never;
 }
 
 const fastify = Fastify({
@@ -38,37 +29,7 @@ const fastify = Fastify({
   },
 }).withTypeProvider<TypeProvider>();
 
-fastify.setValidatorCompiler((obj) => {
-  const [parser] = compileParser(obj.schema);
-
-  return (data: any) => {
-    try {
-      return { value: parser(data) };
-    } catch (error) {
-      return { error: error as Error | undefined };
-    }
-  };
-});
-
-export const negotiated = Symbol("negotiated");
-
-fastify.register(import("@fastify/accepts"))
-
-fastify.addHook("preSerialization", (request, _, payload, done) => {
-  if (request.url.startsWith("/documentation")) return done(null, payload);
-
-  const contentType = request.type(acceptedTypes()) ?? "application/json"; 
-
-  const wrappedPayload = {
-    payload,
-    contentType,
-    [negotiated]: true
-  }
-
-  done(null, wrappedPayload);
-});
-
-fastify.setSerializerCompiler(compileSerializer);
+fastify.register(import("@fastify/accepts"));
 
 fastify.register(import("@fastify/static"), {
   root: import.meta.env.PROD ? __dirname : path.join(__dirname, ".."),
@@ -84,57 +45,16 @@ fastify.register(import("@fastify/static"), {
 
 fastify.register(import("@fastify/formbody"));
 fastify.register(import("@fastify/multipart"), {
-  addToBody: true
+  addToBody: true,
 });
-
-fastify.addContentTypeParser(["text/yml", "text/yaml"], { parseAs: "string" }, (_, payload, done) => {
+fastify.addContentTypeParser(["application/yaml", "text/yaml", "text/yml"], { parseAs: "string" }, (_, body, done) => {
   try {
-    done(null, YAML.parse(payload as string));
-  } catch (error) {
-    (error as unknown & { statusCode: number }).statusCode = 400;
-    done(error as Error);
+    done(null, YAML.load(body as string))
+  } catch (err: any) {
+    err.statusCode = 400
+    done(err, undefined)
   }
-})
-
-function transform({
-  schema,
-  url,
-}: {
-  schema: Record<string, any>;
-  url: string;
-}) {
-  if (
-    !schema ||
-    ("hide" in schema && schema.hide) ||
-    url.startsWith("/documentation")
-  ) {
-    if (schema) schema.hide = true;
-    return { schema, url };
-  }
-
-  for (const prop in schema) {
-    const zodSchema: unknown = schema[prop];
-
-    if (zodSchema instanceof z.Schema) {
-      schema[prop] = zodToJsonSchema(zodSchema);
-    }
-  }
-
-  if ("response" in schema && schema.response) {
-    for (const response in schema.response) {
-      const zodSchema: unknown = schema.response[response];
-
-      if (zodSchema instanceof z.Schema) {
-        schema.response[response] = zodToJsonSchema(zodSchema, {
-          target: "jsonSchema7",
-          $refStrategy: "none",
-        });
-      }
-    }
-  }
-
-  return { schema, url };
-}
+});
 
 fastify.register(import("@fastify/swagger"), {
   swagger: {
@@ -149,7 +69,11 @@ fastify.register(import("@fastify/swagger"), {
     },
     host: import.meta.url,
     schemes: ["http"],
-    consumes: ["application/json", "multipart/form-data", "application/x-www-form-urlencoded"],
+    consumes: [
+      "application/json",
+      "multipart/form-data",
+      "application/x-www-form-urlencoded",
+    ],
     produces: ["application/json"],
   },
   openapi: {
@@ -163,7 +87,6 @@ fastify.register(import("@fastify/swagger"), {
       description: "Find more info here",
     },
   },
-  transform,
   prefix: "/documentation",
 });
 

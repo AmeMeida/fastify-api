@@ -1,17 +1,19 @@
-import { ZodTypeProvider } from "fastify-type-provider-zod";
+import { Type } from "@sinclair/typebox";
 import { FastifyInstance } from "..";
-import { z } from "zod";
 
 export default async function (fastify: FastifyInstance) {
-  fastify.withTypeProvider<ZodTypeProvider>().get(
+  fastify.get(
     "",
     {
       schema: {
         response: {
-          200: z.array(
-            z.object({
-              name: z.enum(["cat", "dog"]),
-              legs: z.number().positive().int(),
+          200: Type.Array(
+            Type.Object({
+              name: Type.String(),
+              legs: Type.Number({
+                minimum: 0,
+                maximum: 4,
+              }),
             }),
           ),
         },

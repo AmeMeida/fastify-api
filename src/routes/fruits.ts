@@ -1,5 +1,5 @@
+import { Type } from "@sinclair/typebox";
 import { FastifyInstance } from "..";
-import { z } from "zod";
 
 export const prefix = "/fruit";
 
@@ -9,10 +9,10 @@ export default async function (fastify: FastifyInstance) {
     {
       schema: {
         response: {
-          200: z.array(
-            z.object({
-              name: z.enum(["apple", "banana"]),
-              color: z.enum(["red", "yellow"]),
+          200: Type.Array(
+            Type.Object({
+              name: Type.Union([Type.Literal("apple"), Type.Literal("banana")]),
+              color: Type.Union([Type.Literal("red"), Type.Literal("yellow")]),
             }),
           ),
         },
@@ -36,8 +36,8 @@ export default async function (fastify: FastifyInstance) {
     "/:name",
     {
       schema: {
-        params: z.object({
-          name: z.enum(["apple", "banana"]),
+        params: Type.Object({
+          name: Type.Union([Type.Literal("apple"), Type.Literal("banana")]),
         }),
         response: {
           200: {

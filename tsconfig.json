@@ -3,10 +3,7 @@
     "target": "ESNext",
     "useDefineForClassFields": true,
     "module": "ESNext",
-    "lib": [
-      "ES2020",
-      "ESNext"
-    ],
+    "lib": ["ES2020", "ESNext"],
     "skipLibCheck": true,
     "noImplicitAny": true,
     /* Bundler mode */
@@ -21,7 +18,5 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": [
-    "src"
-  ]
+  "include": ["src"]
 }

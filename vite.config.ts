@@ -6,28 +6,28 @@ export default defineConfig({
   plugins: [
     ...VitePluginNode({
       appPath: "./src/index.ts",
-      adapter: "fastify",
+      adapter: "fastify"
     }),
     viteStaticCopy({
       targets: [
         {
           src: "public",
-          dest: ".",
-        },
-      ],
-    }),
+          dest: "."
+        }
+      ]
+    })
   ],
   server: {
-    port: 3000,
+    port: 3000
   },
   preview: {
     proxy: {
-      "/api": "http://localhost:3000",
-    },
+      "/api": "http://localhost:3000"
+    }
   },
   publicDir: false,
   build: {
     target: "esnext",
     ssrEmitAssets: true
-  },
+  }
 });

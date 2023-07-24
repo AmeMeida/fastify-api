@@ -2,7 +2,7 @@ import { FastifyInstance } from ".";
 
 export default async function (fastify: FastifyInstance) {
   const routes = import.meta.glob("./routes/**/*.ts", {
-    eager: false,
+    eager: false
   });
 
   await Promise.all(
@@ -17,6 +17,6 @@ export default async function (fastify: FastifyInstance) {
       console.log("Mounting route", prefix);
 
       await fastify.register(routeModule.default, { prefix });
-    }),
+    })
   );
 }

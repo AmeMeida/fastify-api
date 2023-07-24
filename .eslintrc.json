@@ -1,7 +1,5 @@
 {
-  "plugins": [
-    "@typescript-eslint"
-  ],
+  "plugins": ["@typescript-eslint"],
   "extends": [
     "eslint:recommended",
     "plugin:@typescript-eslint/recommended",
@@ -19,19 +17,13 @@
     "no-fallthrough": "error",
     "no-unreachable": "error",
     "camelcase": "warn",
-    "array-bracket-newline": [
-      "error",
-      "consistent"
-    ],
+    "array-bracket-newline": ["error", "consistent"],
     "class-methods-use-this": "error",
     "eqeqeq": "warn",
     "no-eval": "error",
     "no-invalid-regexp": "error",
     "consistent-return": "error",
-    "consistent-this": [
-      "error",
-      "self"
-    ],
+    "consistent-this": ["error", "self"],
     "no-empty": "error",
     "no-unused-vars": "warn",
     "no-use-before-define": "warn",
@@ -48,14 +40,7 @@
     "prefer-arrow-callback": "warn",
     "prefer-template": "warn",
     "no-nested-ternary": "error",
-    "id-blacklist": [
-      "error",
-      "e",
-      "cb",
-      "callback",
-      "fon",
-      "val"
-    ],
+    "id-blacklist": ["error", "e", "cb", "callback", "fon", "val"],
     "no-implied-eval": "error",
     "no-const-assign": "error",
     "no-extra-boolean-cast": "warn",
@@ -65,27 +50,17 @@
     "no-return-await": "warn",
     "no-labels": "error",
     "no-with": "error",
-    "arrow-parens": [
-      "warn",
-      "always"
-    ],
+    "arrow-parens": ["warn", "always"],
     "no-catch-shadow": "error",
     "no-sequences": "error",
     "no-unneeded-ternary": "warn",
     "no-useless-concat": "warn",
     "no-useless-return": "warn"
   },
-  "ignorePatterns": [
-    "node_modules/",
-    "dist/",
-    "coverage/",
-    "test/"
-  ],
+  "ignorePatterns": ["node_modules/", "dist/", "coverage/", "test/"],
   "overrides": [
     {
-      "files": [
-        "*.d.ts"
-      ],
+      "files": ["*.d.ts"],
       "rules": {
         "spaced-comment": "off"
       }
@@ -94,10 +69,7 @@
   "settings": {
     "import/resolver": {
       "node": {
-        "extensions": [
-          ".js",
-          ".ts"
-        ]
+        "extensions": [".js", ".ts"]
       }
     }
   }

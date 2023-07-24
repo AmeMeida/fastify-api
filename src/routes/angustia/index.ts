@@ -7,5 +7,5 @@ export default async function (fastify: FastifyInstance) {
 
   fastify.get("/teste", (_, reply) => {
     reply.send("rota no teste");
-  })
+  });
 }

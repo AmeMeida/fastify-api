@@ -12,24 +12,24 @@ export default async function (fastify: FastifyInstance) {
               name: Type.String(),
               legs: Type.Number({
                 minimum: 0,
-                maximum: 4,
-              }),
-            }),
-          ),
-        },
-      },
+                maximum: 4
+              })
+            })
+          )
+        }
+      }
     },
     async (_request, reply) => {
       return reply.send([
         {
           name: "cat",
-          legs: 4,
+          legs: 4
         },
         {
           name: "dog",
-          legs: 4,
-        },
+          legs: 4
+        }
       ]);
-    },
+    }
   );
 }

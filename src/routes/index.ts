@@ -1,6 +1,10 @@
 import { Type } from "@sinclair/typebox";
-import { FastifyInstance } from "../server";
-import { z } from "zod";
+import { FastifyInstance } from "..";
+
+import engual from "../assets/engual.jpg";
+import musica from "../assets/musica.jpg";
+
+export const prefix = "";
 
 export default async function (fastify: FastifyInstance) {
   fastify.post(
@@ -8,20 +12,14 @@ export default async function (fastify: FastifyInstance) {
     {
       schema: {
         params: Type.Object({
-          user: Type.Union([
-            Type.Literal("admin"),
-            Type.Literal("user"),
-          ])
+          user: Type.Union([Type.Literal("admin"), Type.Literal("user")])
         }),
         body: Type.Object({
-          password: Type.String({ minLength: 8, maxLength: 32 })
+          password: Type.String({ minLength: 8, maxLength: 32 }),
         }),
         response: {
           200: Type.Object({
-            user: Type.Union([
-              Type.Literal("admin"),
-              Type.Literal("user"),
-            ]),
+            user: Type.Union([Type.Literal("admin"), Type.Literal("user")]),
             password: Type.String({ minLength: 8, maxLength: 32 }),
           }),
           400: Type.Literal("Invalid password"),
@@ -39,28 +37,11 @@ export default async function (fastify: FastifyInstance) {
     },
   );
 
-  fastify.post(
-    "/picture",
-    {
-      schema: {
-        body: z.object({
-          picture: z
-            .string()
-            .regex(/^data:image\/(png|jpg|jpeg);base64,/)
-            .refine((x) => {
-              try {
-                const buffer = Buffer.from(x, "base64");
-                return buffer.length > 0;
-              } catch (e) {
-                return false;
-              }
-            })
-            .describe("Base64 encoded picture"),
-        }),
-      },
-    },
-    async (_request, reply) => {
-      return reply.send("ok");
-    },
-  );
+  fastify.get("/tristeza", (_, reply) => {
+    return reply.sendFile(engual);
+  });
+
+  fastify.get("/musica", async (_, reply) => {
+    return reply.sendFile(musica);
+  });
 }

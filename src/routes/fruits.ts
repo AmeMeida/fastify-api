@@ -1,6 +1,7 @@
-import { Type } from "@sinclair/typebox";
-import { FastifyInstance } from "./../server";
+import { FastifyInstance } from "..";
 import { z } from "zod";
+
+export const prefix = "/fruit";
 
 export default async function (fastify: FastifyInstance) {
   fastify.get(
@@ -35,34 +36,32 @@ export default async function (fastify: FastifyInstance) {
     "/:name",
     {
       schema: {
-        params: Type.Object({
-          name: Type.Union([
-            Type.Literal("apple"),
-            Type.Literal("banana"),
-          ]),
+        params: z.object({
+          name: z.enum(["apple", "banana"]),
         }),
         response: {
-          200: Type.Object({
-            name: Type.Union([
-              Type.Literal("apple"),
-              Type.Literal("banana"),
-            ]),
-            color: Type.Union([
-              Type.Literal("red"),
-              Type.Literal("yellow")
-            ])
-          }),
+          200: {
+            type: "object",
+            properties: {
+              name: {
+                type: "string",
+                enum: ["apple", "banana"],
+              },
+              color: {
+                type: "string",
+                enum: ["red", "yellow"],
+              },
+            },
+            required: ["name"],
+          },
         },
-      },
+      } as const,
     },
     (request, reply) => {
       const { name } = request.params;
       const color = name === "apple" ? "red" : "yellow";
 
-      reply.send({
-        name,
-        color,
-      });
+      reply.send({ name, color });
     },
   );
 }

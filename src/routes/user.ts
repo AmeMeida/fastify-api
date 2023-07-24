@@ -1,5 +1,8 @@
-import type { FastifyInstance } from "../server";
+import type { FastifyInstance } from "..";
 import { Type } from "@sinclair/typebox";
+import { z } from "zod";
+
+export const prefix = "/user";
 
 export default async function (fastify: FastifyInstance) {
   fastify.post(
@@ -10,13 +13,18 @@ export default async function (fastify: FastifyInstance) {
           username: Type.String({ minLength: 4, maxLength: 32 }),
           password: Type.String({ minLength: 8, maxLength: 32 }),
         }),
+        response: {
+          200: z.object({
+            logged: z.boolean(),
+          }),
+        },
         summary: "Login",
         tags: ["user", "login", "auth"],
         externalDocs: {
           url: "https://www.wikipedia.org/",
           description: "Find more info here",
-        },
-      },
+        }
+      } as const,
     },
     async (request, reply) => {
       const { username, password } = request.body;
@@ -37,17 +45,17 @@ export default async function (fastify: FastifyInstance) {
           picture: Type.String({
             media: {
               binaryEncoding: "base64",
-              type: "image/png"
-            }
-          })
+              type: "image/png",
+            },
+          }),
         }),
         response: {
           200: Type.Object({
             logged: Type.Boolean(),
-            username: Type.String()
+            username: Type.String(),
           }),
-          400: Type.Literal("Invalid password")
-        }
+          400: Type.Literal("Invalid password"),
+        },
       },
     },
     async (request, reply) => {

@@ -5,7 +5,7 @@ import { viteStaticCopy } from "vite-plugin-static-copy";
 export default defineConfig({
   plugins: [
     ...VitePluginNode({
-      appPath: "./src/server.ts",
+      appPath: "./src/index.ts",
       adapter: "fastify",
     }),
     viteStaticCopy({
@@ -28,5 +28,6 @@ export default defineConfig({
   publicDir: false,
   build: {
     target: "esnext",
+    ssrEmitAssets: true
   },
 });

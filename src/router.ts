@@ -1,9 +1,20 @@
-import { FastifyInstance, FastifyPluginOptions } from "fastify";
+import { FastifyInstance } from ".";
 
-export default async function (fastify: FastifyInstance, _options: FastifyPluginOptions) {
-  // fastify.register(import("./routes/index"));
+export default async function (fastify: FastifyInstance) {
+  const routes = import.meta.glob("./routes/*.ts", {
+    eager: false,
+  });
 
-  fastify.register(import("./routes/animals"), { prefix: "/animal" });
-  fastify.register(import("./routes/fruits"), { prefix: "/fruit" });
-  fastify.register(import("./routes/user"), { prefix: "/user" });
+  await Promise.all(
+    Object.entries(routes).map(async ([path, route]) => {
+      const routeModule = (await route()) as {
+        default: (fastify: FastifyInstance) => Promise<void>;
+        prefix?: string;
+      };
+      const prefix =
+        routeModule.prefix ?? "/" + path.match(/\.\/routes\/(.*)\.ts/)![1];
+
+      await fastify.register(routeModule.default, { prefix });
+    }),
+  );
 }

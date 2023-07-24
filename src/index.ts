@@ -26,6 +26,7 @@ const fastify = Fastify({
     customOptions: {
       keywords: ["media"],
     },
+    plugins: [(await import("@fastify/multipart")).ajvFilePlugin]
   },
 }).withTypeProvider<TypeProvider>();
 
@@ -44,17 +45,19 @@ fastify.register(import("@fastify/static"), {
 });
 
 fastify.register(import("@fastify/formbody"));
-fastify.register(import("@fastify/multipart"), {
-  addToBody: true,
-});
-fastify.addContentTypeParser(["application/yaml", "text/yaml", "text/yml"], { parseAs: "string" }, (_, body, done) => {
-  try {
-    done(null, YAML.load(body as string))
-  } catch (err: any) {
-    err.statusCode = 400
-    done(err, undefined)
-  }
-});
+fastify.register(import("@fastify/multipart"), { addToBody: true });
+fastify.addContentTypeParser(
+  ["application/yaml", "application/yml", "text/yaml", "text/yml"],
+  { parseAs: "string" },
+  (_, body, done) => {
+    try {
+      done(null, YAML.load(body as string));
+    } catch (err: any) {
+      err.statusCode = 400;
+      done(err, undefined);
+    }
+  },
+);
 
 fastify.register(import("@fastify/swagger"), {
   swagger: {

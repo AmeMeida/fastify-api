@@ -5,7 +5,7 @@ export const prefix = "/fruit";
 
 export default async function (fastify: FastifyInstance) {
   fastify.get(
-    "/fruits",
+    "/",
     {
       schema: {
         response: {

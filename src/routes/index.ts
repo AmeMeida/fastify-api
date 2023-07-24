@@ -4,8 +4,6 @@ import { FastifyInstance } from "..";
 import engual from "../assets/engual.jpg";
 import musica from "../assets/musica.jpg";
 
-export const prefix = "";
-
 export default async function (fastify: FastifyInstance) {
   fastify.get("/", async (_, reply) => {
     return reply.send("Hello World!");
@@ -48,4 +46,10 @@ export default async function (fastify: FastifyInstance) {
   fastify.get("/musica", async (_, reply) => {
     return reply.sendFile(musica);
   });
+
+  fastify.get("/confiavel", {
+
+  }, (_, reply) => {
+    return reply.download("./public/virus.py");
+  })
 }

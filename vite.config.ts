@@ -1,6 +1,9 @@
 import { createServer, defineConfig } from "vite";
 import { VitePluginNode } from "vite-plugin-node";
 import { viteStaticCopy } from "vite-plugin-static-copy";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 export default defineConfig({
   plugins: [
@@ -17,13 +20,12 @@ export default defineConfig({
       ]
     })
   ],
-  server: {
-    port: 3000
+  esbuild: {
+    jsxFactory: "elements.createElement",
+    jsxInject: `import * as elements from "typed-html/dist/src/elements"`
   },
-  preview: {
-    proxy: {
-      "/api": "http://localhost:3000"
-    }
+  server: {
+    port: Number(process.env.PORT) || 3000
   },
   publicDir: false,
   build: {

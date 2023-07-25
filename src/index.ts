@@ -1,4 +1,4 @@
-import Fastify, { FastifyTypeProvider } from "fastify";
+import Fastify, { FastifyReply, FastifyTypeProvider } from "fastify";
 import path from "path";
 import { fileURLToPath } from "url";
 import { Static, TSchema } from "@fastify/type-provider-typebox";
@@ -9,6 +9,7 @@ import type {
   JSONSchema7
 } from "json-schema-to-ts";
 import YAML from "js-yaml";
+import { HOST, PORT } from "./enviroment";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 interface TypeProvider<
@@ -59,6 +60,17 @@ fastify.addContentTypeParser(
   }
 );
 
+declare module "fastify" {
+  interface FastifyReply {
+    view: (element: JSX.Element) => FastifyReply;
+  }
+}
+
+fastify.decorateReply("view", function (element: JSX.Element) {
+  (this as unknown as FastifyReply).type("text/html");
+  return this.send(element);
+});
+
 fastify.register(import("@fastify/swagger"), {
   swagger: {
     info: {
@@ -100,7 +112,7 @@ fastify.register(import("./router"));
 await fastify.ready();
 
 if (import.meta.env.PROD) {
-  fastify.listen({ port: 3000 }, (err, address) => {
+  fastify.listen({ port: PORT, host: HOST }, (err, address) => {
     if (err) {
       console.error(err);
       process.exit(1);

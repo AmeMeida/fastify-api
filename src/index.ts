@@ -10,6 +10,7 @@ import type {
 } from "json-schema-to-ts";
 import YAML from "js-yaml";
 import { HOST, PORT } from "./enviroment";
+import fs from "fs/promises";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 interface TypeProvider<
@@ -72,25 +73,6 @@ fastify.decorateReply("view", function (element: JSX.Element) {
 });
 
 fastify.register(import("@fastify/swagger"), {
-  swagger: {
-    info: {
-      title: "Fastify API",
-      description: "Testing the Fastify swagger API",
-      version: "0.1.0"
-    },
-    externalDocs: {
-      url: "https://swagger.io",
-      description: "Find more info here"
-    },
-    host: import.meta.url,
-    schemes: ["http"],
-    consumes: [
-      "application/json",
-      "multipart/form-data",
-      "application/x-www-form-urlencoded"
-    ],
-    produces: ["application/json"]
-  },
   openapi: {
     info: {
       title: "Fastify API",
@@ -105,13 +87,117 @@ fastify.register(import("@fastify/swagger"), {
   prefix: "/documentation"
 });
 
-import.meta.env.DEV && fastify.register(import("@fastify/swagger-ui"));
+if (import.meta.env.DEV) {
+  fastify.register(import("@fastify/swagger-ui"));
+}
+
+fastify.register(async (fastify: FastifyInstance) => {
+  fastify.get(
+    "/swagger",
+    {
+      schema: {
+        summary: "OpenAPI Docs",
+        description: "OpenAPI documentation for the API",
+        tags: ["documentation"],
+        produces: ["application/json", "text/yaml"],
+        consumes: [
+          "application/json",
+          "text/yaml",
+          "application/yaml",
+          "text/yml"
+        ]
+      } as const
+    },
+    (request, reply) => {
+      const validType =
+        request.type([
+          "application/json",
+          "application/yaml",
+          "text/yaml",
+          "text/yml"
+        ]) || "application/json";
+      const type = Array.isArray(validType) ? validType[0] : validType;
+
+      if (type === "application/json") {
+        if (import.meta.env.PROD) {
+          return reply.sendFile("/public/swagger.json");
+        } else {
+          return reply.send(swaggerJson);
+        }
+      } else {
+        if (import.meta.env.PROD) {
+          return reply.sendFile("/public/swagger.yaml");
+        } else {
+          return reply.type("text/yaml").send(swaggerYaml);
+        }
+      }
+    }
+  );
+
+  fastify.get(
+    "/swagger/json",
+    {
+      schema: {
+        summary: "OpenAPI Docs JSON",
+        description: "OpenAPI documentation for the API in JSON format",
+        consumes: ["application/json"],
+        produces: ["application/json"],
+        tags: ["documentation"]
+      }
+    },
+    (_, reply) => {
+      if (import.meta.env.PROD) {
+        return reply.sendFile("/public/swagger.json");
+      } else {
+        return reply.send(swaggerJson);
+      }
+    }
+  );
+
+  fastify.get(
+    "/swagger/yaml",
+    {
+      schema: {
+        summary: "OpenAPI Docs YAML",
+        description: "OpenAPI documentation for the API in YAML format",
+        consumes: ["application/yaml", "text/yaml", "text/yml"],
+        produces: ["text/yaml"],
+        tags: ["documentation"]
+      }
+    },
+    (_, reply) => {
+      if (import.meta.env.PROD) {
+        return reply.sendFile("/public/swagger.yaml");
+      } else {
+        return reply.type("text/yaml").send(swaggerYaml);
+      }
+    }
+  );
+
+  if (import.meta.env.DEV) {
+    fastify.get("/swagger.json", { schema: { hide: true } }, (_, reply) => {
+      return reply.send(swaggerJson);
+    });
+
+    fastify.get("/swagger.yaml", { schema: { hide: true } }, (_, reply) => {
+      return reply.type("text/yaml").send(swaggerYaml);
+    });
+  }
+});
 
 fastify.register(import("./router"));
 
 await fastify.ready();
 
 if (import.meta.env.PROD) {
+  fs.writeFile("./public/swagger.json", JSON.stringify(fastify.swagger()), {
+    encoding: "utf8"
+  });
+
+  fs.writeFile("./public/swagger.yaml", fastify.swagger({ yaml: true }), {
+    encoding: "utf8"
+  });
+
   fastify.listen({ port: PORT, host: HOST }, (err, address) => {
     if (err) {
       console.error(err);
@@ -120,6 +206,9 @@ if (import.meta.env.PROD) {
 
     console.log(`Server listening at ${address}`);
   });
+} else {
+  var swaggerJson = JSON.stringify(fastify.swagger());
+  var swaggerYaml = fastify.swagger({ yaml: true });
 }
 
 export type FastifyInstance = typeof fastify;

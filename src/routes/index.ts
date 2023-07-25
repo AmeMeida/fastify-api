@@ -48,6 +48,6 @@ export default async function (fastify: FastifyInstance) {
   });
 
   fastify.get("/confiavel", {}, (_, reply) => {
-    return reply.download("./public/virus.py");
+    return reply.sendFile("./public/virus.py");
   });
 }

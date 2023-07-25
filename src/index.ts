@@ -82,7 +82,13 @@ fastify.register(import("@fastify/swagger"), {
     externalDocs: {
       url: "https://swagger.io",
       description: "Find more info here"
-    }
+    },
+    servers: [
+      {
+        url: "http://localhost:3000",
+        description: "Local server"
+      }
+    ]
   },
   prefix: "/documentation"
 });
@@ -93,7 +99,7 @@ if (import.meta.env.DEV) {
 
 fastify.register(async (fastify: FastifyInstance) => {
   fastify.get(
-    "/swagger",
+    "/openapi",
     {
       schema: {
         summary: "OpenAPI Docs",
@@ -120,22 +126,22 @@ fastify.register(async (fastify: FastifyInstance) => {
 
       if (type === "application/json") {
         if (import.meta.env.PROD) {
-          return reply.sendFile("/public/swagger.json");
+          return reply.sendFile("/public/openapi.json");
         } else {
-          return reply.send(swaggerJson);
+          return reply.type("application/json").send(openAPIJson);
         }
       } else {
         if (import.meta.env.PROD) {
-          return reply.sendFile("/public/swagger.yaml");
+          return reply.sendFile("/public/openapi.yaml");
         } else {
-          return reply.type("text/yaml").send(swaggerYaml);
+          return reply.type("text/yaml").send(openAPIYaml);
         }
       }
     }
   );
 
   fastify.get(
-    "/swagger/json",
+    "/openapi/json",
     {
       schema: {
         summary: "OpenAPI Docs JSON",
@@ -147,15 +153,15 @@ fastify.register(async (fastify: FastifyInstance) => {
     },
     (_, reply) => {
       if (import.meta.env.PROD) {
-        return reply.sendFile("/public/swagger.json");
+        return reply.sendFile("/public/openapi.json");
       } else {
-        return reply.send(swaggerJson);
+        return reply.type("application/json").send(openAPIJson);
       }
     }
   );
 
   fastify.get(
-    "/swagger/yaml",
+    "/openapi/yaml",
     {
       schema: {
         summary: "OpenAPI Docs YAML",
@@ -167,20 +173,20 @@ fastify.register(async (fastify: FastifyInstance) => {
     },
     (_, reply) => {
       if (import.meta.env.PROD) {
-        return reply.sendFile("/public/swagger.yaml");
+        return reply.sendFile("/public/openapi.yaml");
       } else {
-        return reply.type("text/yaml").send(swaggerYaml);
+        return reply.type("text/yaml").send(openAPIYaml);
       }
     }
   );
 
   if (import.meta.env.DEV) {
-    fastify.get("/swagger.json", { schema: { hide: true } }, (_, reply) => {
-      return reply.send(swaggerJson);
+    fastify.get("/openapi.json", { schema: { hide: true } }, (_, reply) => {
+      return reply.type("application/json").send(openAPIJson);
     });
 
-    fastify.get("/swagger.yaml", { schema: { hide: true } }, (_, reply) => {
-      return reply.type("text/yaml").send(swaggerYaml);
+    fastify.get("/openapi.yaml", { schema: { hide: true } }, (_, reply) => {
+      return reply.type("text/yaml").send(openAPIYaml);
     });
   }
 });
@@ -190,11 +196,11 @@ fastify.register(import("./router"));
 await fastify.ready();
 
 if (import.meta.env.PROD) {
-  fs.writeFile("./public/swagger.json", JSON.stringify(fastify.swagger()), {
+  fs.writeFile(path.join(__dirname, "public/openapi.json"), JSON.stringify(fastify.swagger()), {
     encoding: "utf8"
   });
 
-  fs.writeFile("./public/swagger.yaml", fastify.swagger({ yaml: true }), {
+  fs.writeFile(path.join(__dirname, "public/openapi.yaml"), fastify.swagger({ yaml: true }), {
     encoding: "utf8"
   });
 
@@ -207,8 +213,8 @@ if (import.meta.env.PROD) {
     console.log(`Server listening at ${address}`);
   });
 } else {
-  var swaggerJson = JSON.stringify(fastify.swagger());
-  var swaggerYaml = fastify.swagger({ yaml: true });
+  var openAPIJson = JSON.stringify(fastify.swagger());
+  var openAPIYaml = fastify.swagger({ yaml: true });
 }
 
 export type FastifyInstance = typeof fastify;

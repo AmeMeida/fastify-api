@@ -7,7 +7,6 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview",
     "start": "node ./dist/",
     "lint": "eslint",
     "format": "prettier --write .",
@@ -37,7 +36,9 @@
     "@fastify/static": "^6.10.2",
     "@fastify/swagger": "^8.8.0",
     "@sinclair/typebox": "^0.29.6",
+    "dotenv": "^16.3.1",
     "fastify": "^4.20.0",
-    "js-yaml": "^4.1.0"
+    "js-yaml": "^4.1.0",
+    "typed-html": "^3.0.1"
   }
 }

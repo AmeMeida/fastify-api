@@ -1,7 +1,7 @@
 import { FastifyInstance } from ".";
 
 export default async function (fastify: FastifyInstance) {
-  const routes = import.meta.glob("./routes/**/*.ts", {
+  const routes = import.meta.glob("./routes/**/*.{ts,js,tsx,jsx}", {
     eager: false
   });
 
@@ -13,8 +13,6 @@ export default async function (fastify: FastifyInstance) {
       };
       const prefix =
         routeModule.prefix ?? path.match(/\.\/routes(.*?)(\/index)?\.ts/)![1];
-
-      console.log("Mounting route", prefix);
 
       await fastify.register(routeModule.default, { prefix });
     })

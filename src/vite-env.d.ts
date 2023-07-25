@@ -1,8 +1,12 @@
 /// <reference types="vite/client" />
+/// <reference types="typed-html" />
 
-import type { ZodTypeAny } from "zod";
 import type { JSONSchema7 } from "json-schema-to-ts";
 import type { TSchema } from "@sinclair/typebox";
+
+declare global {
+  const elements: typeof import("typed-html");
+}
 
 declare module "fastify" {
   type SchemaValidator = ZodTypeAny | TSchema | JSONSchema7 | undefined;

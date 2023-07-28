@@ -1,4 +1,12 @@
-FROM node:latest
+FROM node:alpine AS build
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+RUN npm run build
+
+
+FROM node:alpine
 
 ARG HOST=0.0.0.0
 ENV HOST $HOST
@@ -6,19 +14,9 @@ ENV HOST $HOST
 ARG PORT=3000
 ENV PORT $PORT
 
-# Create app directory
-WORKDIR /usr/src/app
-
-# Install app dependencies
+WORKDIR /app
 COPY package*.json ./
-RUN npm install
-
-# Bundle app source
-COPY . .
-RUN npm run build
-
-# Remove dev dependencies
-RUN npm prune --omit=dev
-
-CMD [ "npm", "start" ]
-EXPOSE 3000
+RUN npm install --production
+COPY --from=build /app/dist ./dist
+CMD ["npm", "start"]
+EXPOSE $PORT

@@ -196,13 +196,21 @@ fastify.register(import("./router"));
 await fastify.ready();
 
 if (import.meta.env.PROD) {
-  fs.writeFile(path.join(__dirname, "public/openapi.json"), JSON.stringify(fastify.swagger()), {
-    encoding: "utf8"
-  });
+  fs.writeFile(
+    path.join(__dirname, "public/openapi.json"),
+    JSON.stringify(fastify.swagger()),
+    {
+      encoding: "utf8"
+    }
+  );
 
-  fs.writeFile(path.join(__dirname, "public/openapi.yaml"), fastify.swagger({ yaml: true }), {
-    encoding: "utf8"
-  });
+  fs.writeFile(
+    path.join(__dirname, "public/openapi.yaml"),
+    fastify.swagger({ yaml: true }),
+    {
+      encoding: "utf8"
+    }
+  );
 
   fastify.listen({ port: PORT, host: HOST }, (err, address) => {
     if (err) {

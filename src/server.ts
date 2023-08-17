@@ -11,6 +11,7 @@ import type {
 import YAML from "js-yaml";
 import { HOST, PORT } from "./enviroment";
 import fs from "fs/promises";
+import router from "./router";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 interface TypeProvider<
@@ -191,7 +192,7 @@ fastify.register(async (fastify: FastifyInstance) => {
   }
 });
 
-fastify.register(import("./router"));
+fastify.register(router);
 
 await fastify.ready();
 

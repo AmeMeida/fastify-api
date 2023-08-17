@@ -8,7 +8,7 @@ dotenv.config();
 export default defineConfig({
   plugins: [
     ...VitePluginNode({
-      appPath: "./src/index.ts",
+      appPath: "./src/server.ts",
       adapter: "fastify"
     }),
     viteStaticCopy({
@@ -30,6 +30,10 @@ export default defineConfig({
   publicDir: false,
   build: {
     target: "esnext",
-    ssrEmitAssets: true
+    ssrEmitAssets: true,
+    assetsInlineLimit: 0,
+    rollupOptions: {
+      treeshake: true
+    }
   }
 });

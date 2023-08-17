@@ -1,5 +1,5 @@
 import { JSONSchema7 } from "json-schema";
-import { FastifyInstance } from "..";
+import { FastifyInstance } from "../server";
 import { Attributes } from "typed-html";
 
 function HelloWorld({ children, ...props }: Attributes) {
@@ -32,7 +32,7 @@ export default async function (fastify: FastifyInstance) {
     async (_request, reply) => {
       reply.view(
         <HelloWorld>
-          <p>hi</p>
+          <p>hiii</p>
         </HelloWorld>
       );
     }
@@ -52,7 +52,7 @@ export default async function (fastify: FastifyInstance) {
       }
     },
     (_request, reply) => {
-      reply.view(<h1>Teste</h1>);
+      reply.view(<p>Teste</p>);
     }
   );
 }

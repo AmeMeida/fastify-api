@@ -1,5 +1,5 @@
 import { Type } from "@sinclair/typebox";
-import { FastifyInstance } from "..";
+import { FastifyInstance } from "../server";
 
 export const prefix = "/fruit";
 

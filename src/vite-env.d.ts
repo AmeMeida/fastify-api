@@ -5,7 +5,7 @@ import type { JSONSchema7 } from "json-schema-to-ts";
 import type { TSchema } from "@sinclair/typebox";
 
 declare global {
-  const elements: typeof import("typed-html");
+  const { createElement, Fragment }: typeof import("@kitajs/html");
 }
 
 declare module "fastify" {

@@ -1,8 +1,11 @@
 import { JSONSchema7 } from "json-schema";
 import { FastifyInstance } from "../server";
-import { Attributes } from "typed-html";
+import type html from "@kitajs/html";
 
-function HelloWorld({ children, ...props }: Attributes) {
+function HelloWorld({
+  children,
+  ...props
+}: html.PropsWithChildren<{ hi?: string }>) {
   return (
     <html {...props}>
       <head>
@@ -10,6 +13,7 @@ function HelloWorld({ children, ...props }: Attributes) {
       </head>
       <body>
         <h1>{children}</h1>
+        <p>{props.hi}</p>
       </body>
     </html>
   );
@@ -32,7 +36,8 @@ export default async function (fastify: FastifyInstance) {
     async (_request, reply) => {
       reply.view(
         <HelloWorld>
-          <p>hiii</p>
+          <p>hi</p>
+          <h1>hi</h1>
         </HelloWorld>
       );
     }

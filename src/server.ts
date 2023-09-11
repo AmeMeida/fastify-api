@@ -64,11 +64,11 @@ fastify.addContentTypeParser(
 
 declare module "fastify" {
   interface FastifyReply {
-    view: (element: JSX.Element) => FastifyReply;
+    view: (element: string) => FastifyReply;
   }
 }
 
-fastify.decorateReply("view", function (element: JSX.Element) {
+fastify.decorateReply("view", function (element: string) {
   (this as unknown as FastifyReply).type("text/html");
   return this.send(element);
 });

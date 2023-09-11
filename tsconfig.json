@@ -18,7 +18,8 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "jsx": "react",
-    "jsxFactory": "elements.createElement"
+    "jsxFactory": "createElement",
+    "jsxFragmentFactory": "Fragment"
   },
   "include": ["src"]
 }

@@ -21,8 +21,9 @@ export default defineConfig({
     })
   ],
   esbuild: {
-    jsxFactory: "elements.createElement",
-    jsxInject: `import * as elements from "typed-html/dist/src/elements"`
+    jsxFactory: "createElement",
+    jsxFragment: "Fragment",
+    jsxInject: `import { createElement, Fragment } from "@kitajs/html"`
   },
   server: {
     port: Number(process.env.PORT) || 3000

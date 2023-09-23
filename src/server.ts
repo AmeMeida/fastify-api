@@ -1,7 +1,8 @@
-import Fastify, { FastifyReply, FastifyTypeProvider } from "fastify";
+import Fastify from "fastify";
+import type { FastifyReply, FastifyTypeProvider } from "fastify";
 import path from "path";
 import { fileURLToPath } from "url";
-import { Static, TSchema } from "@fastify/type-provider-typebox";
+import type { Static, TSchema } from "@fastify/type-provider-typebox";
 import type {
   FromSchema,
   FromSchemaOptions,

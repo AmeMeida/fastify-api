@@ -1,5 +1,5 @@
 import { Type } from "@sinclair/typebox";
-import { FastifyInstance } from "../server";
+import type { FastifyInstance } from "../server";
 
 import engual from "../assets/engual.jpg";
 import musica from "../assets/musica.jpg";

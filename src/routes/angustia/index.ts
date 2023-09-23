@@ -1,4 +1,4 @@
-import { FastifyInstance } from "../../server";
+import type { FastifyInstance } from "../../server";
 
 export default async function (fastify: FastifyInstance) {
   fastify.get("/", async (_, reply) => {

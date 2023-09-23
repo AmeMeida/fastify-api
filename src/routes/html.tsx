@@ -1,5 +1,4 @@
-import { JSONSchema7 } from "json-schema";
-import { FastifyInstance } from "../server";
+import type { FastifyInstance } from "../server";
 import type html from "@kitajs/html";
 
 function HelloWorld({
@@ -28,7 +27,7 @@ export default async function (fastify: FastifyInstance) {
           200: {
             type: "string",
             contentMediaType: "text/html"
-          } satisfies JSONSchema7
+          }
         },
         produces: ["text/html"]
       } as const

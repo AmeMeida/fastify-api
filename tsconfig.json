@@ -12,6 +12,8 @@
     "isolatedModules": true,
     "noEmit": true,
     "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "verbatimModuleSyntax": true,
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,

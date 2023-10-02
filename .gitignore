@@ -14,6 +14,9 @@ dist-ssr
 
 **/*.local.*
 
+# sqlite database
+**/*.db
+
 **/.env
 
 # Editor directories and files

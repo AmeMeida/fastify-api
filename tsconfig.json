@@ -28,5 +28,6 @@
       }
     ]
   },
-  "include": ["src", "dev.ts"]
+  "include": ["src", "dev.ts"],
+  "exclude": ["node_modules"]
 }

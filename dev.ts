@@ -4,12 +4,23 @@ import type { Connect, ViteDevServer, Plugin } from "vite";
 const PATH = "./src/server.ts";
 
 async function createMiddleware(server: ViteDevServer) {
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  let app: any = undefined;
+  let stale = true;
+
+  server.watcher.on("all", () => {
+    stale = true;
+  });
+
   return async (
     req: IncomingMessage,
     res: ServerResponse,
-    _next: Connect.NextFunction,
+    _next: Connect.NextFunction
   ) => {
-    const { app } = await server.ssrLoadModule(PATH);
+    if (stale || !app) {
+      app = (await server.ssrLoadModule(PATH)).app;
+      stale = false;
+    }
 
     app.routing(req, res);
   };
@@ -21,24 +32,21 @@ export default function FastifyVitePlugin(): Plugin[] {
       name: "Fastify Dev",
       config: () => {
         return {
-          server: {
-            hmr: false,
-          },
           optimizeDeps: {
             noDiscovery: true,
-            include: undefined,
+            include: undefined
           },
           build: {
             ssr: PATH,
             rollupOptions: {
-              input: PATH,
-            },
-          },
+              input: PATH
+            }
+          }
         };
       },
       configureServer: async (server) => {
         server.middlewares.use(await createMiddleware(server));
-      },
-    },
+      }
+    }
   ];
 }

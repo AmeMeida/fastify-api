@@ -34,9 +34,8 @@ export default async function (fastify: FastifyInstance) {
     },
     async (_request, reply) => {
       reply.view(
-        <HelloWorld>
-          <p>hi</p>
-          <h1>hi</h1>
+        <HelloWorld hi="oiiii">
+          hi
         </HelloWorld>,
       );
     },

@@ -1,11 +1,10 @@
 /// <reference types="vite/client" />
-/// <reference types="typed-html" />
 
 import type { JSONSchema7 } from "json-schema-to-ts";
 import type { TSchema } from "@sinclair/typebox";
 
 declare global {
-  const { createElement, Fragment }: typeof import("@kitajs/html");
+  const Html: typeof import("@kitajs/html");
 }
 
 declare module "fastify" {

@@ -48,15 +48,17 @@ fastify.register(import("@fastify/static"), {
 });
 
 fastify.register(import("@fastify/formbody"));
-fastify.register(import("@fastify/multipart"), { addToBody: true });
+fastify.register(import("@fastify/multipart"), {
+  attachFieldsToBody: "keyValues",
+});
 
 declare module "fastify" {
   interface FastifyReply {
-    view: (element: string) => FastifyReply;
+    view: (element: string | Promise<string>) => FastifyReply;
   }
 }
 
-fastify.decorateReply("view", function (element: string) {
+fastify.decorateReply("view", function (element: string | Promise<string>) {
   (this as unknown as FastifyReply).type("text/html");
   return this.send(element);
 });
@@ -81,10 +83,6 @@ fastify.register(import("@fastify/swagger"), {
   },
   prefix: "/documentation",
 });
-
-if (import.meta.env.DEV) {
-  fastify.register(import("@fastify/swagger-ui"));
-}
 
 fastify.register(async (fastify: FastifyInstance) => {
   fastify.get(
@@ -165,21 +163,16 @@ fastify.register(async (fastify: FastifyInstance) => {
   );
 
   if (import.meta.env.DEV) {
-    fastify.get("/openapi.json", { schema: { hide: true } }, (_, reply) => {
-      return reply.type("application/json").send(openAPIJson);
-    });
-
-    fastify.get("/openapi.yaml", { schema: { hide: true } }, (_, reply) => {
-      return reply.type("text/yaml").send(openAPIYaml);
-    });
   }
 });
 
 fastify.register(router);
 
-await fastify.ready();
-
 if (import.meta.env.PROD) {
+  await fastify.ready();
+
+  console.log("a");
+
   fs.writeFile(
     path.join(__dirname, "public/openapi.json"),
     JSON.stringify(fastify.swagger()),
@@ -205,6 +198,18 @@ if (import.meta.env.PROD) {
     console.log(`Server listening at ${address}`);
   });
 } else {
+  await fastify.register(import("@fastify/swagger-ui"));
+
+  fastify.get("/openapi.json", { schema: { hide: true } }, (_, reply) => {
+    return reply.type("application/json").send(openAPIJson);
+  });
+
+  fastify.get("/openapi.yaml", { schema: { hide: true } }, (_, reply) => {
+    return reply.type("text/yaml").send(openAPIYaml);
+  });
+
+  await fastify.ready();
+
   // biome-ignore lint: var actually makes sense here
   var openAPIJson = JSON.stringify(fastify.swagger());
   // biome-ignore lint: var actually makes sense here
@@ -212,4 +217,5 @@ if (import.meta.env.PROD) {
 }
 
 export type FastifyInstance = typeof fastify;
-export const viteNodeApp = fastify;
+
+export const app = fastify;

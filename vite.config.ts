@@ -1,16 +1,14 @@
 import { createServer, defineConfig } from "vite";
-import { VitePluginNode } from "vite-plugin-node";
 import { viteStaticCopy } from "vite-plugin-static-copy";
 import dotenv from "dotenv";
+
+import FastifyDevPlugin from "./dev.ts";
 
 dotenv.config();
 
 export default defineConfig({
   plugins: [
-    ...VitePluginNode({
-      appPath: "./src/server.ts",
-      adapter: "fastify",
-    }),
+    FastifyDevPlugin(),
     viteStaticCopy({
       targets: [
         {
@@ -21,9 +19,9 @@ export default defineConfig({
     }),
   ],
   esbuild: {
-    jsxFactory: "createElement",
-    jsxFragment: "Fragment",
-    jsxInject: `import { createElement, Fragment } from "@kitajs/html"`,
+    jsxInject: `import Html from "@kitajs/html"`,
+    jsxFactory: "Html.createElement",
+    jsxFragment: "Html.Fragment",
   },
   server: {
     port: Number(process.env.PORT) || 3000,

@@ -26,20 +26,20 @@ export default async function (fastify: FastifyInstance) {
         response: {
           200: {
             type: "string",
-            contentMediaType: "text/html"
-          }
+            contentMediaType: "text/html",
+          },
         },
-        produces: ["text/html"]
-      } as const
+        produces: ["text/html"],
+      } as const,
     },
     async (_request, reply) => {
       reply.view(
         <HelloWorld>
           <p>hi</p>
           <h1>hi</h1>
-        </HelloWorld>
+        </HelloWorld>,
       );
-    }
+    },
   );
 
   fastify.get(
@@ -49,14 +49,14 @@ export default async function (fastify: FastifyInstance) {
         response: {
           200: {
             type: "string",
-            contentMediaType: "text/html"
-          }
+            contentMediaType: "text/html",
+          },
         },
-        produces: ["text/html"]
-      }
+        produces: ["text/html"],
+      },
     },
     (_request, reply) => {
       reply.view(<p>Teste</p>);
-    }
+    },
   );
 }

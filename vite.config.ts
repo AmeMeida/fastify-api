@@ -9,24 +9,24 @@ export default defineConfig({
   plugins: [
     ...VitePluginNode({
       appPath: "./src/server.ts",
-      adapter: "fastify"
+      adapter: "fastify",
     }),
     viteStaticCopy({
       targets: [
         {
           src: "public",
-          dest: "."
-        }
-      ]
-    })
+          dest: ".",
+        },
+      ],
+    }),
   ],
   esbuild: {
     jsxFactory: "createElement",
     jsxFragment: "Fragment",
-    jsxInject: `import { createElement, Fragment } from "@kitajs/html"`
+    jsxInject: `import { createElement, Fragment } from "@kitajs/html"`,
   },
   server: {
-    port: Number(process.env.PORT) || 3000
+    port: Number(process.env.PORT) || 3000,
   },
   publicDir: false,
   build: {
@@ -34,7 +34,7 @@ export default defineConfig({
     ssrEmitAssets: true,
     assetsInlineLimit: 0,
     rollupOptions: {
-      treeshake: true
-    }
-  }
+      treeshake: true,
+    },
+  },
 });

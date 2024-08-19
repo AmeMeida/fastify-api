@@ -12,24 +12,24 @@ export default async function (fastify: FastifyInstance) {
           200: Type.Array(
             Type.Object({
               name: Type.Union([Type.Literal("apple"), Type.Literal("banana")]),
-              color: Type.Union([Type.Literal("red"), Type.Literal("yellow")])
-            })
-          )
-        }
-      }
+              color: Type.Union([Type.Literal("red"), Type.Literal("yellow")]),
+            }),
+          ),
+        },
+      },
     },
     (_request, reply) => {
       reply.send([
         {
           name: "apple",
-          color: "red"
+          color: "red",
         },
         {
           name: "banana",
-          color: "yellow"
-        }
+          color: "yellow",
+        },
       ]);
-    }
+    },
   );
 
   fastify.get(
@@ -37,7 +37,7 @@ export default async function (fastify: FastifyInstance) {
     {
       schema: {
         params: Type.Object({
-          name: Type.Union([Type.Literal("apple"), Type.Literal("banana")])
+          name: Type.Union([Type.Literal("apple"), Type.Literal("banana")]),
         }),
         response: {
           200: {
@@ -45,23 +45,23 @@ export default async function (fastify: FastifyInstance) {
             properties: {
               name: {
                 type: "string",
-                enum: ["apple", "banana"]
+                enum: ["apple", "banana"],
               },
               color: {
                 type: "string",
-                enum: ["red", "yellow"]
-              }
+                enum: ["red", "yellow"],
+              },
             },
-            required: ["name"]
-          }
-        }
-      } as const
+            required: ["name"],
+          },
+        },
+      } as const,
     },
     (request, reply) => {
       const { name } = request.params;
       const color = name === "apple" ? "red" : "yellow";
 
       reply.send({ name, color });
-    }
+    },
   );
 }

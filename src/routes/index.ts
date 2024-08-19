@@ -14,19 +14,19 @@ export default async function (fastify: FastifyInstance) {
     {
       schema: {
         params: Type.Object({
-          user: Type.Union([Type.Literal("admin"), Type.Literal("user")])
+          user: Type.Union([Type.Literal("admin"), Type.Literal("user")]),
         }),
         body: Type.Object({
-          password: Type.String({ minLength: 8, maxLength: 32 })
+          password: Type.String({ minLength: 8, maxLength: 32 }),
         }),
         response: {
           200: Type.Object({
             user: Type.Union([Type.Literal("admin"), Type.Literal("user")]),
-            password: Type.String({ minLength: 8, maxLength: 32 })
+            password: Type.String({ minLength: 8, maxLength: 32 }),
           }),
-          400: Type.Literal("Invalid password")
-        }
-      }
+          400: Type.Literal("Invalid password"),
+        },
+      },
     },
     async (request, _reply) => {
       const { password } = request.body;
@@ -34,9 +34,9 @@ export default async function (fastify: FastifyInstance) {
 
       return {
         password,
-        user
+        user,
       };
-    }
+    },
   );
 
   fastify.get("/tristeza", (_, reply) => {

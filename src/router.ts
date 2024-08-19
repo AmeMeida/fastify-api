@@ -2,7 +2,7 @@ import type { FastifyInstance } from "./server";
 
 export default async function (fastify: FastifyInstance) {
   const routes = import.meta.glob("./routes/**/*.{ts,js,tsx,jsx}", {
-    eager: true
+    eager: true,
   });
 
   await Promise.all(
@@ -12,9 +12,10 @@ export default async function (fastify: FastifyInstance) {
         prefix?: string;
       };
       const prefix =
-        routeModule.prefix ?? path.match(/\.\/routes(.*?)(?:\/index)?\.(?:ts|js|tsx|jsx)/)![1];
+        routeModule.prefix ??
+        path.match(/\.\/routes(.*?)(?:\/index)?\.(?:ts|js|tsx|jsx)/)?.[1];
 
       await fastify.register(routeModule.default, { prefix });
-    })
+    }),
   );
 }

@@ -1,37 +1,36 @@
 import Fastify from "fastify";
 import type { FastifyReply, FastifyTypeProvider } from "fastify";
-import path from "path";
-import { fileURLToPath } from "url";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import type { Static, TSchema } from "@fastify/type-provider-typebox";
 import type {
   FromSchema,
   FromSchemaOptions,
   FromSchemaDefaultOptions,
-  JSONSchema7
+  JSONSchema,
 } from "json-schema-to-ts";
-import YAML from "js-yaml";
 import { HOST, PORT } from "./enviroment";
-import fs from "fs/promises";
+import fs from "node:fs/promises";
 import router from "./router";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 interface TypeProvider<
-  Options extends FromSchemaOptions = FromSchemaDefaultOptions
+  Options extends FromSchemaOptions = FromSchemaDefaultOptions,
 > extends FastifyTypeProvider {
   output: this["input"] extends TSchema
     ? Static<this["input"]>
-    : this["input"] extends JSONSchema7
-    ? FromSchema<this["input"], Options>
-    : never;
+    : this["input"] extends JSONSchema
+      ? FromSchema<this["input"], Options>
+      : never;
 }
 
 const fastify = Fastify({
   ajv: {
     customOptions: {
-      keywords: ["media"]
+      keywords: ["media"],
     },
-    plugins: [(await import("@fastify/multipart")).ajvFilePlugin]
-  }
+    plugins: [(await import("@fastify/multipart")).ajvFilePlugin],
+  },
 }).withTypeProvider<TypeProvider>();
 
 fastify.register(import("@fastify/accepts"));
@@ -39,29 +38,17 @@ fastify.register(import("@fastify/accepts"));
 fastify.register(import("@fastify/static"), {
   root: import.meta.env.PROD ? __dirname : path.join(__dirname, ".."),
   wildcard: false,
-  serve: false
+  serve: false,
 });
 
 fastify.register(import("@fastify/static"), {
   root: path.join(__dirname, import.meta.env.PROD ? "./public" : "../public"),
   wildcard: true,
-  decorateReply: false
+  decorateReply: false,
 });
 
 fastify.register(import("@fastify/formbody"));
 fastify.register(import("@fastify/multipart"), { addToBody: true });
-fastify.addContentTypeParser(
-  ["application/yaml", "application/yml", "text/yaml", "text/yml"],
-  { parseAs: "string" },
-  (_, body, done) => {
-    try {
-      done(null, YAML.load(body as string));
-    } catch (err: any) {
-      err.statusCode = 400;
-      done(err, undefined);
-    }
-  }
-);
 
 declare module "fastify" {
   interface FastifyReply {
@@ -79,20 +66,20 @@ fastify.register(import("@fastify/swagger"), {
     info: {
       title: "Fastify API",
       description: "Testing the Fastify openapi API",
-      version: "0.1.0"
+      version: "0.1.0",
     },
     externalDocs: {
       url: "https://swagger.io",
-      description: "Find more info here"
+      description: "Find more info here",
     },
     servers: [
       {
         url: "http://localhost:3000",
-        description: "Local server"
-      }
-    ]
+        description: "Local server",
+      },
+    ],
   },
-  prefix: "/documentation"
+  prefix: "/documentation",
 });
 
 if (import.meta.env.DEV) {
@@ -108,13 +95,8 @@ fastify.register(async (fastify: FastifyInstance) => {
         description: "OpenAPI documentation for the API",
         tags: ["documentation"],
         produces: ["application/json", "text/yaml"],
-        consumes: [
-          "application/json",
-          "text/yaml",
-          "application/yaml",
-          "text/yml"
-        ]
-      } as const
+        consumes: ["application/json"],
+      } as const,
     },
     (request, reply) => {
       const validType =
@@ -122,24 +104,24 @@ fastify.register(async (fastify: FastifyInstance) => {
           "application/json",
           "application/yaml",
           "text/yaml",
-          "text/yml"
+          "text/yml",
         ]) || "application/json";
       const type = Array.isArray(validType) ? validType[0] : validType;
 
       if (type === "application/json") {
         if (import.meta.env.PROD) {
           return reply.sendFile("/public/openapi.json");
-        } else {
-          return reply.type("application/json").send(openAPIJson);
         }
-      } else {
-        if (import.meta.env.PROD) {
-          return reply.sendFile("/public/openapi.yaml");
-        } else {
-          return reply.type("text/yaml").send(openAPIYaml);
-        }
+
+        return reply.type("application/json").send(openAPIJson);
       }
-    }
+
+      if (import.meta.env.PROD) {
+        return reply.sendFile("/public/openapi.yaml");
+      }
+
+      return reply.type("text/yaml").send(openAPIYaml);
+    },
   );
 
   fastify.get(
@@ -150,16 +132,16 @@ fastify.register(async (fastify: FastifyInstance) => {
         description: "OpenAPI documentation for the API in JSON format",
         consumes: ["application/json"],
         produces: ["application/json"],
-        tags: ["documentation"]
-      }
+        tags: ["documentation"],
+      },
     },
     (_, reply) => {
       if (import.meta.env.PROD) {
         return reply.sendFile("/public/openapi.json");
-      } else {
-        return reply.type("application/json").send(openAPIJson);
       }
-    }
+
+      return reply.type("application/json").send(openAPIJson);
+    },
   );
 
   fastify.get(
@@ -170,16 +152,16 @@ fastify.register(async (fastify: FastifyInstance) => {
         description: "OpenAPI documentation for the API in YAML format",
         consumes: ["application/yaml", "text/yaml", "text/yml"],
         produces: ["text/yaml"],
-        tags: ["documentation"]
-      }
+        tags: ["documentation"],
+      },
     },
     (_, reply) => {
       if (import.meta.env.PROD) {
         return reply.sendFile("/public/openapi.yaml");
-      } else {
-        return reply.type("text/yaml").send(openAPIYaml);
       }
-    }
+
+      return reply.type("text/yaml").send(openAPIYaml);
+    },
   );
 
   if (import.meta.env.DEV) {
@@ -202,16 +184,16 @@ if (import.meta.env.PROD) {
     path.join(__dirname, "public/openapi.json"),
     JSON.stringify(fastify.swagger()),
     {
-      encoding: "utf8"
-    }
+      encoding: "utf8",
+    },
   );
 
   fs.writeFile(
     path.join(__dirname, "public/openapi.yaml"),
     fastify.swagger({ yaml: true }),
     {
-      encoding: "utf8"
-    }
+      encoding: "utf8",
+    },
   );
 
   fastify.listen({ port: PORT, host: HOST }, (err, address) => {
@@ -223,7 +205,9 @@ if (import.meta.env.PROD) {
     console.log(`Server listening at ${address}`);
   });
 } else {
+  // biome-ignore lint: var actually makes sense here
   var openAPIJson = JSON.stringify(fastify.swagger());
+  // biome-ignore lint: var actually makes sense here
   var openAPIYaml = fastify.swagger({ yaml: true });
 }
 

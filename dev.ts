@@ -18,8 +18,21 @@ async function createMiddleware(server: ViteDevServer) {
     _next: Connect.NextFunction,
   ) => {
     if (stale || !app) {
-      app = (await server.ssrLoadModule(PATH)).app;
-      stale = false;
+      try {
+        app = (await server.ssrLoadModule(PATH)).app;
+        stale = false;
+      } catch (err) {
+        if (err instanceof Error) {
+          server.ssrFixStacktrace(err);
+          res.write(err.message);
+        } else {
+          res.write("Error");
+        }
+
+        res.statusCode = 500;
+        res.end();
+        return;
+      }
     }
 
     app.routing(req, res);

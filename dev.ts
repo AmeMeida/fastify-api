@@ -1,5 +1,5 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
-import type { Connect, ViteDevServer, Plugin } from "vite";
+import type { Connect, Plugin, ViteDevServer } from "vite";
 
 const PATH = "./src/server.ts";
 
@@ -15,7 +15,7 @@ async function createMiddleware(server: ViteDevServer) {
   return async (
     req: IncomingMessage,
     res: ServerResponse,
-    _next: Connect.NextFunction
+    _next: Connect.NextFunction,
   ) => {
     if (stale || !app) {
       app = (await server.ssrLoadModule(PATH)).app;
@@ -34,19 +34,19 @@ export default function FastifyVitePlugin(): Plugin[] {
         return {
           optimizeDeps: {
             noDiscovery: true,
-            include: undefined
+            include: undefined,
           },
           build: {
             ssr: PATH,
             rollupOptions: {
-              input: PATH
-            }
-          }
+              input: PATH,
+            },
+          },
         };
       },
       configureServer: async (server) => {
         server.middlewares.use(await createMiddleware(server));
-      }
-    }
+      },
+    },
   ];
 }

@@ -11,7 +11,7 @@
     "start": "node ./dist/server.js",
     "lint": "biome lint .",
     "format": "biome format --write .",
-    "check": "biome check . && tsc",
+    "check": "biome check . && tsc --noEmit",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {

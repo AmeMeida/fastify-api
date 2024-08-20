@@ -1,0 +1,11 @@
+{
+  "recommendations": [
+    "biomejs.biome",
+    "usernamehw.errorlens",
+    "kohler.npm-intellisense",
+    "yoavbls.pretty-ts-errors",
+    "bruno-api-client.bruno",
+    "visualstudioexptteam.vscodeintellicode",
+    "editorconfig.editorconfig"
+  ]
+}

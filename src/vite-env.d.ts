@@ -1,7 +1,7 @@
 /// <reference types="vite/client" />
 
-import type { JSONSchema7 } from "json-schema-to-ts";
 import type { TSchema } from "@sinclair/typebox";
+import type { JSONSchema7 } from "json-schema-to-ts";
 
 declare global {
   const Html: typeof import("@kitajs/html");

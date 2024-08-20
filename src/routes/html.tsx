@@ -1,5 +1,5 @@
-import type { FastifyInstance } from "../server";
 import type html from "@kitajs/html";
+import type { FastifyInstance } from "../server";
 
 function HelloWorld({
   children,
@@ -33,11 +33,7 @@ export default async function (fastify: FastifyInstance) {
       } as const,
     },
     async (_request, reply) => {
-      reply.view(
-        <HelloWorld hi="oiiii">
-          hi
-        </HelloWorld>,
-      );
+      reply.view(<HelloWorld hi="oiiii">hi</HelloWorld>);
     },
   );
 

@@ -1,16 +1,16 @@
-import Fastify from "fastify";
-import type { FastifyReply, FastifyTypeProvider } from "fastify";
+import fs from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import type { Static, TSchema } from "@fastify/type-provider-typebox";
+import Fastify from "fastify";
+import type { FastifyReply, FastifyTypeProvider } from "fastify";
 import type {
   FromSchema,
-  FromSchemaOptions,
   FromSchemaDefaultOptions,
+  FromSchemaOptions,
   JSONSchema,
 } from "json-schema-to-ts";
 import { HOST, PORT } from "./enviroment";
-import fs from "node:fs/promises";
 import router from "./router";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 

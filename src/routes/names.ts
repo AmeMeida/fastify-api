@@ -1,5 +1,5 @@
-import type { FastifyInstance } from "../server";
 import nomes from "../assets/nomes.json";
+import type { FastifyInstance } from "../server";
 
 export default async function (fastify: FastifyInstance) {
   fastify.get(

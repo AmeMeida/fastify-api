@@ -1,6 +1,6 @@
+import dotenv from "dotenv";
 import { createServer, defineConfig } from "vite";
 import { viteStaticCopy } from "vite-plugin-static-copy";
-import dotenv from "dotenv";
 
 import FastifyDevPlugin from "./dev.ts";
 
